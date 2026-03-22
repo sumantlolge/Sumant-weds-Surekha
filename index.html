@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumant & Surekha's Wedding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <!-- Confetti library CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --maroon: #800000;
+            --cream: #FFFAF0;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--cream);
+            color: #333;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        /* --- CURTAIN SECTION --- */
+        #curtain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            cursor: pointer;
+            transition: visibility 0s 1.2s;
+        }
+        .curtain {
+            width: 50%;
+            height: 100%;
+            background: var(--maroon);
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(0,0,0,0.1) 31px);
+            transition: transform 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .curtain.left { border-right: 3px solid var(--gold); }
+        .curtain.right { border-left: 3px solid var(--gold); }
+        .curtain-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--gold);
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            z-index: 1001;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none;
+            width: 90%;
+        }
+        .opened .left { transform: translateX(-100%); }
+        .opened .right { transform: translateX(100%); }
+        .opened .curtain-text { opacity: 0; transition: 0.5s; }
+        .opened { pointer-events: none; visibility: hidden; }
+        /* --- CONTENT SECTIONS --- */
+        section { padding: 60px 20px; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; }
+
+        h1 { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: var(--maroon); margin: 10px 0; }
+        h2 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.8rem; margin-bottom: 20px; }
+
+        .sub-text { font-family: 'Playfair Display', serif; font-style: italic;font-size: 1.1rem; letter-spacing: 2px; }
+        /* --- COUNTDOWN --- */
+        #countdown {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        .time-box {
+            background: var(--maroon);
+            color: var(--gold);
+            padding: 12px;
+            border-radius: 8px;
+            min-width: 65px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .time-box span { display: block; font-size: 1.4rem; font-weight: bold; }
+        .time-box label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; }
+        /* --- SCRATCH REVEAL --- */
+        #scratch-container {
+            position: relative;
+            width: 280px;
+            height: 140px;
+            margin: 20px auto;
+            background: #fff;
+            border: 2px solid var(--gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--maroon);
+            font-family: 'Playfair Display', serif;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #scratch-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; touch-action: none; }
+        /* --- VENUE CARD --- */
+        .venue-card {
+            background: white;
+            padding: 35px 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 450px;
+            margin: 0 auto;
+            border: 1px solid #eee;
+        }
+        .maps-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--maroon);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 2px;
+            transition: 0.3s;
+        }
+        .maps-link:hover { color: var(--gold); }
+    </style>
+</head>
+<body>
+    <div id="curtain-container" onclick="this.classList.add('opened')">
+        <div class="curtain left"></div>
+        <div class="curtain-text">Tap to Open Invitation</div>
+        <div class="curtain right"></div>
+    </div>
+
+    <section>
+        <p class="sub-text">SAVE THE DATE</p>
+        <h1>Sumant & Surekha</h1>
+        <p>Together with our families, we invite you to celebrate our wedding.</p>
+
+        <div id="countdown">
+            <div class="time-box"><span id="days">00</span><label>Days</label></div>
+            <div class="time-box"><span id="hours">00</span><label>Hrs</label></div>
+            <div class="time-box"><span id="mins">00</span><label>Mins</label></div>
+        </div>
+    </section>
+
+    <section style="background-color: #fcf6ea;">
+        <h2>Reveal the Date</h2>
+        <div id="scratch-container">
+            May 13, 2026
+            <canvas id="scratch-canvas" width="280" height="140"></canvas>
+        </div>
+    </section>
+
+    <section>
+        <div class="venue-card">
+            <h2>The Venue</h2>
+            <p><strong>Vaibhavlaxmi Banquet Hall</strong></p>
+            <p style="font-size: 0.95rem;">Manur Shivar, Nandur Naka, Sambhajinagar Rd,<br>Madsangavi, Nashik, Maharashtra 422003</p>
+            <a href="https://maps.google.com/?cid=7152820979891425638&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNl" target="_blank" class="maps-link">📍 View on Google Maps</a>
+            <hr style="width:40%; border: 0.5px solid var(--gold); margin: 25pxauto;">
+            <p class="sub-text" style="font-size: 0.9rem;">Your presence will make our day truly special.</p>
+        </div>
+    </section>
+
+    <script>
+        // Countdown Logic
+        const weddingDate = new Date("May 13, 2026 00:00:00").getTime();
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+            if (distance < 0) {
+                document.getElementById("countdown").innerHTML = "The Big Day is Here!";
+                return;
+            }
+            document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+            document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById("mins").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Scratch Card Logic with reduced-density Sparkles
+        const canvas = document.getElementById('scratch-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let revealed = false; // prevent multiple triggers
+        const totalPixels = canvas.width * canvas.height;
+
+        // Cover layer (gold)
+        ctx.fillStyle = '#D4AF37';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Add pattern to scratch area
+        ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+        ctx.lineWidth = 1;
+        for(let i=0; i<canvas.width; i+=10) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+        ctx.fillStyle = '#800000';
+        ctx.font = 'bold 16px Poppins';
+        ctx.textAlign = 'center';
+        ctx.fillText('SCRATCH TO REVEAL', 140, 78);
+
+        function scratch(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(x, y, 25, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Throttle check
+            if (!revealed) {
+                setTimeout(checkRevealed, 400);
+            }
+        }
+
+        function checkRevealed() {
+            if (revealed) return;
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            let transparentCount = 0;
+            for (let i = 3; i < imageData.length; i += 4) {
+                if (imageData[i] === 0) transparentCount++;
+            }
+            if (transparentCount / totalPixels > 0.5) {
+                revealed = true;
+                triggerSparkles();
+            }
+        }
+
+        function triggerSparkles() {
+            const duration = 3500; // shorter and gentler
+            const animationEnd = Date.now() + duration;
+
+            (function frame() {
+                // Very light bursts – fewer particles
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0, y: 0.7 },
+                    colors: ['#D4AF37', '#800000', '#FFD700']
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1, y: 0.7 },
+                    colors: ['#D4AF37', '#800000', '#FFD700']
+                });
+                confetti({
+                    particleCount: 5,
+                    spread: 70,
+                    origin: { y: 0.8 },
+                    colors: ['#D4AF37', '#800000', '#FFFFFF']
+                });
+
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+        }
+
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        canvas.addEventListener('touchstart', () => isDrawing = true);
+        window.addEventListener('mouseup', () => isDrawing = false);
+        window.addEventListener('touchend', () => isDrawing = false);
+        canvas.addEventListener('mousemove', scratch);
+        canvas.addEventListener('touchmove', scratch, {passive: false});
+    </script>
+</body>
+</html>
