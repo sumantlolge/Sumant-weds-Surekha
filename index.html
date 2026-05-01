@@ -926,13 +926,16 @@
   </footer>
 
 </div><!-- end main-content -->
-
+<audio id="bgMusic" loop>
+  <source src="tummile.mp3" type="audio/mpeg">
+</audio>
 <script>
 function openDoors() {
   const intro = document.getElementById('intro-screen');
   const main = document.getElementById('main-content');
   const ctrl = document.getElementById('controlBar');
   intro.classList.add('opened');
+  toggleMusic();
   setTimeout(() => {
     intro.classList.add('gone');
     main.classList.add('visible');
@@ -1106,8 +1109,29 @@ function burstSparkles() {
 }
 
 let musicOn = false;
+const music = document.getElementById("bgMusic");
+
 function toggleMusic() {
   musicOn = !musicOn;
+
+  if (musicOn) {
+    music.volume = 0;
+    music.play();
+
+    let vol = 0;
+    let fade = setInterval(() => {
+      if (vol < 1) {
+        vol += 0.05;
+        music.volume = vol;
+      } else {
+        clearInterval(fade);
+      }
+    }, 100);
+  } else {
+    music.pause();
+    music.currentTime = 0;
+  }
+
   document.getElementById('musicBtn').textContent = musicOn ? '🔊' : '🔇';
 }
 </script>
