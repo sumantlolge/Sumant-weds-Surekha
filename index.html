@@ -936,12 +936,33 @@ function openDoors() {
   const intro = document.getElementById('intro-screen');
   const main = document.getElementById('main-content');
   const ctrl = document.getElementById('controlBar');
+  const bgMusic = document.getElementById('bgMusic');
+
   intro.classList.add('opened');
+
+  /* MUSIC STARTS ON USER CLICK */
+  bgMusic.volume = 0;
+  bgMusic.play().then(() => {
+
+    let vol = 0;
+    const fade = setInterval(() => {
+      vol += 0.05;
+      if (vol >= 1) {
+        vol = 1;
+        clearInterval(fade);
+      }
+      bgMusic.volume = vol;
+    }, 180);
+
+    musicOn = true;
+    document.getElementById('musicBtn').textContent = '🔊';
+
+  }).catch(err => console.log(err));
+
   setTimeout(() => {
     intro.classList.add('gone');
     main.classList.add('visible');
     ctrl.classList.add('visible');
-    startMusicFadeIn();
     initParticles();
     initScrollFade();
     initScratch();
