@@ -266,7 +266,7 @@
     0%,100% { transform: translateX(-50%) translateY(0); }
     50% { transform: translateX(-50%) translateY(7px); }
   }
-
+  
   /* ── WAVE DIVIDER ── */
   .wave-div {
     width: 100%;
@@ -1131,38 +1131,23 @@ function burstSparkles() {
   }
 }
 
-let musicOn = false;
-const bgMusic = document.getElementById('bgMusic');
-bgMusic.volume = 0;
-
-function startMusicFadeIn() {
-  bgMusic.play().catch(() => {});
-  musicOn = true;
-  document.getElementById('musicBtn').textContent = '🔊';
-
-  let vol = 0;
-  const fade = setInterval(() => {
-    vol += 0.03;
-    if (vol >= 1) {
-      vol = 1;
-      clearInterval(fade);
-    }
-    bgMusic.volume = vol;
-  }, 150);
-}
+  let musicOn = false;
 
 function toggleMusic() {
+  const bgMusic = document.getElementById('bgMusic');
+
   if (musicOn) {
     bgMusic.pause();
     musicOn = false;
     document.getElementById('musicBtn').textContent = '🔇';
   } else {
-    bgMusic.play().catch(() => {});
+    bgMusic.play();
     bgMusic.volume = 1;
     musicOn = true;
     document.getElementById('musicBtn').textContent = '🔊';
   }
 }
+
 </script>
 </body>
 </html>
