@@ -938,34 +938,39 @@ function openDoors() {
   const ctrl = document.getElementById('controlBar');
   const bgMusic = document.getElementById('bgMusic');
 
+  // Open doors first
   intro.classList.add('opened');
 
-  /* MUSIC STARTS ON USER CLICK */
-  bgMusic.volume = 0;
+  // Start music safely
+  if (bgMusic) {
+    bgMusic.volume = 0;
 
-setTimeout(() => {
-  bgMusic.play().catch(err => console.log(err));
-}, 100);
+    bgMusic.play().then(() => {
+      let vol = 0;
 
-    let vol = 0;
-    const fade = setInterval(() => {
-      vol += 0.05;
-      if (vol >= 1) {
-        vol = 1;
-        clearInterval(fade);
-      }
-      bgMusic.volume = vol;
-    }, 180);
+      const fade = setInterval(() => {
+        vol += 0.05;
 
-    musicOn = true;
-    document.getElementById('musicBtn').textContent = '🔊';
+        if (vol >= 1) {
+          vol = 1;
+          clearInterval(fade);
+        }
 
-  }).catch(err => console.log(err));
+        bgMusic.volume = vol;
+      }, 180);
 
+      musicOn = true;
+      document.getElementById('musicBtn').textContent = '🔊';
+
+    }).catch(() => {});
+  }
+
+  // Show website after animation
   setTimeout(() => {
     intro.classList.add('gone');
     main.classList.add('visible');
     ctrl.classList.add('visible');
+
     initParticles();
     initScrollFade();
     initScratch();
