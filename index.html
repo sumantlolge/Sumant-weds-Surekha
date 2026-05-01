@@ -942,7 +942,10 @@ function openDoors() {
 
   /* MUSIC STARTS ON USER CLICK */
   bgMusic.volume = 0;
-  bgMusic.play();
+
+setTimeout(() => {
+  bgMusic.play().catch(err => console.log(err));
+}, 100);
 
     let vol = 0;
     const fade = setInterval(() => {
@@ -1141,7 +1144,7 @@ function toggleMusic() {
     musicOn = false;
     document.getElementById('musicBtn').textContent = '🔇';
   } else {
-    bgMusic.play();
+    bgMusic.play().catch(() => {});
     bgMusic.volume = 1;
     musicOn = true;
     document.getElementById('musicBtn').textContent = '🔊';
