@@ -1109,30 +1109,36 @@ function burstSparkles() {
 }
 
 let musicOn = false;
-const music = document.getElementById("bgMusic");
 
 function toggleMusic() {
+  const music = document.getElementById("bgMusic");
+
+  if (!music) return;
+
   musicOn = !musicOn;
 
   if (musicOn) {
     music.volume = 0;
-    music.play();
 
-    let vol = 0;
-    let fade = setInterval(() => {
-      if (vol < 1) {
-        vol += 0.05;
-        music.volume = vol;
-      } else {
-        clearInterval(fade);
-      }
-    }, 100);
+    music.play().then(() => {
+      let vol = 0;
+
+      let fade = setInterval(() => {
+        if (vol < 1) {
+          vol += 0.05;
+          music.volume = vol;
+        } else {
+          clearInterval(fade);
+        }
+      }, 100);
+    }).catch(err => console.log(err));
+
   } else {
     music.pause();
     music.currentTime = 0;
   }
 
-  document.getElementById('musicBtn').textContent = musicOn ? '🔊' : '🔇';
+  document.getElementById("musicBtn").textContent = musicOn ? "🔊" : "🔇";
 }
 </script>
 </body>
